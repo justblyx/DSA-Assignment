@@ -4,21 +4,20 @@ import javafx.scene.control.Button;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 
-public class App extends Application {
-
+public class SolarSystem extends Application {
     @Override
     public void start(Stage stage) {
+        VBox root = new VBox(10);
 
-        Button btn = new Button("click me cuz y not");
+        /*Button btn = new Button("click me cuz y not");
 
         btn.setOnAction(e -> {
             System.out.println("nice");
         });
 
-        VBox root = new VBox(10);
-        root.getChildren().add(btn);
-
-        Scene scene = new Scene(root, 300, 200);
+        root.getChildren().add(btn);*/
+        
+        Scene scene = new Scene(root, 640, 640);
 
         stage.setTitle("Solar System");
         stage.setScene(scene);
