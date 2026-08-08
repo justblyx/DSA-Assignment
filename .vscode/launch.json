@@ -3,13 +3,6 @@
     "configurations": [
         {
             "type": "java",
-            "name": "SolarSystem",
-            "request": "launch",
-            "mainClass": "SolarSystem",
-            "projectName": "DSA-Assignment_812782e9"
-        },
-        {
-            "type": "java",
             "name": "Main",
             "request": "launch",
             "mainClass": "Main",
