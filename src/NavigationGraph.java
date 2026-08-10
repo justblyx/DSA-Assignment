@@ -88,6 +88,7 @@ public class NavigationGraph {
         ArrayList<Planet> result = new ArrayList<>();
 
         Planet startPlanet = findPlanet(start);
+        
         if (startPlanet == null) return result;
 
         Queue<Planet> queue = new LinkedList<>();
