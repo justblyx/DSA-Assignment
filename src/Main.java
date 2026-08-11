@@ -102,7 +102,7 @@ public class Main {
                     System.out.println(padded("Main Menu"));
                     System.out.println(padded(seperator(20)));
                     System.out.println(padded("1. Create Graph"));
-                    System.out.println(padded("2. Search for Traversal Path"));
+                    System.out.println(padded("2. BFS Traversal"));
                     System.out.println(padded("3. View the Graph"));
                     System.out.println(padded("4. Exit\n"));
 
@@ -125,7 +125,6 @@ public class Main {
                             break;
                         default:
                             feedback("Invalid input");
-                            scanner.nextLine();
                             break;
                     }
                     break;
@@ -136,10 +135,10 @@ public class Main {
                     System.out.println(seperator(CLI_SIZE));
                     System.out.println(padded("Options"));
                     System.out.println(padded(seperator(20)));
-                    System.out.println(padded("1. Add vertex"));
-                    System.out.println(padded("2. Remove vertex"));
-                    System.out.println(padded("3. Add edge"));
-                    System.out.println(padded("4. Remove edge"));
+                    System.out.println(padded("1. Add vertex (planet)"));
+                    System.out.println(padded("2. Remove vertex (planet)"));
+                    System.out.println(padded("3. Add edge (route)"));
+                    System.out.println(padded("4. Remove edge (route)"));
                     System.out.println(padded("5. Return to Main Menu\n"));
 
                     choice = getInt();
@@ -179,15 +178,37 @@ public class Main {
                     }
 
                     break;
+
                 case TRAVERSE_GRAPH:
+                    if (graph.getPlanets().isEmpty()) {
+                        feedback("There are no planets in the graph!");
+                        currentState = MenuState.MAIN_MENU;
+                        break;
+                    }
+
+                    String startPlanet = getString("Enter starting planet (or 0 to exit): ");
+                    if (startPlanet.equals("0")) { 
+                        currentState = MenuState.MAIN_MENU;
+                        break;
+                    }
+
+                    NavigationController.setGraph(graph);
+                    NavigationController.showBFS(startPlanet);
+
+                    System.out.println("\n" + padded("Please close the JavaFX window and press Enter to continue..."));
+                    scanner.nextLine();
+
+                    currentState = MenuState.MAIN_MENU;
                     break;
+
                 case DISPLAY_GRAPH:
                     NavigationController.setGraph(graph);
                     NavigationController.showGraph();
-                    System.out.println("\n" + padded("Please close the JavaFX app and press any key to continue..."));
+                    System.out.println("\n" + padded("Please close the JavaFX window and press Enter to continue..."));
                     scanner.nextLine();
                     currentState = MenuState.MAIN_MENU;
                     break;
+
                 default:
                     currentState = MenuState.MAIN_MENU;
                     break;

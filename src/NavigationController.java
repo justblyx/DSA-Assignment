@@ -116,7 +116,7 @@ public class NavigationController extends Application {
         });
     }
 
-    private static void showBFS(String start) {
+    public static void showBFS(String start) {
         if (stage == null) return;
         Platform.runLater(() -> {
             if (graph == null) return;
