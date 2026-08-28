@@ -1,269 +1,152 @@
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.LinkedList;
+import java.util.Queue;
 
-public abstract class AbstractGraph<V> implements Graph<V> {
-    protected List<V> vertices = new ArrayList<>(); // Store vertices
-    protected List<List<Edge>> neighbors = new ArrayList<>(); // Adjacency lists
-    /**
-    * Construct an empty graph
-    */
-    protected AbstractGraph() {
+public abstract class AbstractGraph implements Graph {
+
+    protected ArrayList<Planet> planets;
+    protected HashMap<Planet, ArrayList<Planet>> adjacencyList;
+
+    public AbstractGraph() {
+        planets = new ArrayList<>();
+        adjacencyList = new HashMap<>();
     }
-    /**
-    * Construct a graph from vertices and edges stored in arrays
-    */
-    protected AbstractGraph(V[] vertices, int[][] edges) {
-        for (int i = 0; i < vertices.length; i++) {
-            addVertex(vertices[i]);
-    }
-        createAdjacencyLists(edges, vertices.length);
-    }
-    /**
-    * Construct a graph from vertices and edges stored in List
-    */
-    protected AbstractGraph(List<V> vertices, List<Edge> edges) {
-        for (int i = 0; i < vertices.size(); i++) {
-            addVertex(vertices.get(i));
-        }
-        createAdjacencyLists(edges, vertices.size());
-    }
-    /**
-    * Construct a graph for integer vertices 0, 1, 2 and edge list
-    */
-    protected AbstractGraph(List<Edge> edges, int numberOfVertices) {
-        for (int i = 0; i < numberOfVertices; i++) {
-            addVertex((V) (new Integer(i))); // vertices is {0, 1, ...}
-        }
-        createAdjacencyLists(edges, numberOfVertices);
-    }
-    /**
-    * Construct a graph from integer vertices 0, 1, and edge array
-    */
-    protected AbstractGraph(int[][] edges, int numberOfVertices) {
-        for (int i = 0; i < numberOfVertices; i++) {
-            addVertex((V) (new Integer(i))); // vertices is {0, 1, ...}
-        }
-        createAdjacencyLists(edges, numberOfVertices);
-    }
-    /**
-    * Create adjacency lists for each vertex
-    */
-    private void createAdjacencyLists(int[][] edges, int numberOfVertices) {
-        for (int i = 0; i < edges.length; i++) {
-            addEdge(edges[i][0], edges[i][1]);
-        }
-    }
-    /**
-    * Create adjacency lists for each vertex
-    */
-    private void createAdjacencyLists(List<Edge> edges, int numberOfVertices) {
-        for (Edge edge : edges) {
-            addEdge(edge.u, edge.v);
-        }
-    }
+
     @Override
-    /**
-    * Return the number of vertices in the graph
-    */
-    public int getSize() {
-        return vertices.size();
+    public ArrayList<Planet> getPlanets() {
+        return planets;
     }
+
     @Override
-    /**
-    * Return the vertices in the graph
-    */
-    public List<V> getVertices() {
-        return vertices;
+    public HashMap<Planet, ArrayList<Planet>> getAdjacencyList() {
+        return adjacencyList;
     }
-    @Override
-    /**
-    * Return the object for the specified vertex
-    */
-    public V getVertex(int index) {
-        return vertices.get(index);
-    }
-    @Override
-    /**
-    * Return the index for the specified vertex object
-    */
-    public int getIndex(V v) {
-        return vertices.indexOf(v);
-    }
-    @Override
-    /**
-    * Return the neighbors of the specified vertex
-    */
-    public List<Integer> getNeighbors(int index) {
-        List<Integer> result = new ArrayList<>();
-        for (Edge e : neighbors.get(index)) {
-            result.add(e.v);
-        }
-        return result;
-    }
-    @Override
-    /**
-    * Return the degree for a specified vertex
-    */
-    public int getDegree(int v) {
-        return neighbors.get(v).size();
-    }
-    @Override
-    /**
-    * Print the edges
-    */
-    public void printEdges() {
-        for (int u = 0; u < neighbors.size(); u++) {
-            System.out.print(getVertex(u) + " (" + u + "): ");
-            for (Edge e : neighbors.get(u)) {
-                System.out.print("(" + getVertex(e.u) + ", "
-                + getVertex(e.v) + ") ");
-            }
-            System.out.println();
-        }
-    }
-    @Override
-    /**
-    * Clear the graph
-    */
-    public void clear() {
-        vertices.clear();
-        neighbors.clear();
-    }
-    @Override /** Add a vertex to the graph */
-    /*public boolean addVertex(V vertex) {
-    if (!vertices.contains(vertex)) {
-    vertices.add(vertex);
-    }
-    neighbors.add(new ArrayList<Edge>());
-    return true;
-    } else {
-    return false;
-    }*/
-    public boolean addVertex(V vertex) {
-        if (!vertices.contains(vertex)) {
-            vertices.add(vertex);
-            neighbors.add(new ArrayList<Edge>());
-            return true;
-        } else {
-        return false;
-        }    
-    }
-    /**
-    * Add an edge to the graph
-    */
-    public boolean addEdge(Edge e) {
-        if (e.u < 0 || e.u > getSize() - 1) {
-            throw new IllegalArgumentException("No such index: " + e.u);
-        }
-        if (e.v < 0 || e.v > getSize() - 1) {
-            throw new IllegalArgumentException("No such index: " + e.v);
-        }
-        if (!neighbors.get(e.u).contains(e)) {
-            neighbors.get(e.u).add(e);
-            return true;
-        } else {
-            return false;
-        }
-    }
-    @Override
-    /**
-    * Add an edge to the graph
-    */
-    public boolean addEdge(int u, int v) {
-        return addEdge(new Edge(u, v));
-    }
-    /**
-    * Edge inner class inside the AbstractGraph class
-    */
-    public static class Edge {
-        public int u; // Starting vertex of the edge
-        public int v; // Ending vertex of the edge
-        /**
-        * Construct an edge for (u, v)
-        */
-        public Edge(int u, int v) {
-            this.u = u;
-            this.v = v;
-        }
-        public boolean equals(Object o) {
-            return u == ((Edge) o).u && v == ((Edge) o).v;
-        }
-    }
-    /**
-    * Tree inner class inside the AbstractGraph class
-    */
-    /**
-    * To be discussed in Section 28.6
-    */
-    public class Tree {
-        private int root; // The root of the tree
-        private int[] parent; // Store the parent of each vertex
-        private List<Integer> searchOrder; // Store the search order
-        /**
-        * Construct a tree with root, parent, and searchOrder
-        */
-        public Tree(int root, int[] parent, List<Integer> searchOrder) {
-            this.root = root;
-            this.parent = parent;
-            this.searchOrder = searchOrder;
-        }
-        /**
-        * Return the root of the tree
-        */
-        public int getRoot() {
-            return root;
-        }
-        /**
-        * Return the parent of vertex v
-        */
-        public int getParent(int v) {
-            return parent[v];
-        }
-        /**
-        * Return an array representing search order
-        */
-        public List<Integer> getSearchOrder() {
-            return searchOrder;
-        }
-        /**
-        * Return number of vertices found
-        */
-        public int getNumberOfVerticesFound() {
-            return searchOrder.size();
-        }
-        /**
-        * Return the path of vertices from a vertex to the root
-        */
-        public List<V> getPath(int index) {
-            ArrayList<V> path = new ArrayList<>();
-            do {
-                path.add(vertices.get(index));
-                index = parent[index];
-            } while (index != -1);
-            return path;
-        }
-        /**
-        * Print a path from the root to vertex v
-        */
-        public void printPath(int index) {
-            List<V> path = getPath(index);
-            System.out.print("A path from " + vertices.get(root) + " to " + vertices.get(index) + ": ");
-            for (int i = path.size() - 1; i >= 0; i--) {
-            System.out.print(path.get(i) + " ");
+
+    protected Planet findPlanet(String name) {
+        for (Planet p : planets) {
+            if (p.getName().equalsIgnoreCase(name)) {
+                return p;
             }
         }
-        /**
-        * Print the whole tree
-        */
-        public void printTree() {
-            System.out.println("Root is: " + vertices.get(root));
-            System.out.print("Edges: ");
-            for (int i = 0; i < parent.length; i++) {
-                if (parent[i] != -1) {
-                    // Display an edge
-                    System.out.print("(" + vertices.get(parent[i]) + ", " + vertices.get(i) + ") ");
+
+        return null;
+    }
+
+    @Override
+    public boolean planetExists(String name) {
+        return findPlanet(name) != null;
+    }
+
+    @Override
+    public ArrayList<Planet> getAdjacentPlanets(String name) {
+        Planet planet = findPlanet(name);
+
+        if (planet == null) {
+            return null;
+        }
+
+        return adjacencyList.get(planet);
+    }
+
+    @Override
+    public void removePlanet(String name) {
+        Planet p = findPlanet(name);
+
+        if (p == null) {
+            Main.feedback("Planet does not exist!");
+            return;
+        }
+
+        // Remove the planet from other adjacency lists
+        for (ArrayList<Planet> neighbours : adjacencyList.values()) {
+            neighbours.remove(p);
+        }
+
+        // Remove the planet itself
+        planets.remove(p);
+        adjacencyList.remove(p);
+
+        Main.feedback("Planet removed successfully!");
+    }
+
+    @Override
+    public void addRoute(String source, String destination) {
+        Planet src = findPlanet(source);
+        Planet dest = findPlanet(destination);
+
+        if (src == null || dest == null) {
+            Main.feedback("One or both planets do not exist!");
+            return;
+        }
+
+        if (src.equals(dest)) {
+            Main.feedback("A planet cannot be connected to itself!");
+            return;
+        }
+
+        if (adjacencyList.get(src).contains(dest)) {
+            Main.feedback("Route already exists!");
+            return;
+        }
+
+        // Undirected graph
+        adjacencyList.get(src).add(dest);
+        adjacencyList.get(dest).add(src);
+
+        Main.feedback("Route added successfully!");
+    }
+
+    @Override
+    public void removeRoute(String source, String destination) {
+        Planet src = findPlanet(source);
+        Planet dest = findPlanet(destination);
+
+        if (src == null || dest == null) {
+            Main.feedback("One or both planets do not exist!");
+            return;
+        }
+
+        if (!adjacencyList.get(src).contains(dest)) {
+            Main.feedback("Route does not exist!");
+            return;
+        }
+
+        adjacencyList.get(src).remove(dest);
+        adjacencyList.get(dest).remove(src);
+
+        Main.feedback("Route removed successfully!");
+    }
+
+    @Override
+    public ArrayList<Planet> bfs(String start) {
+        ArrayList<Planet> result = new ArrayList<>();
+
+        Planet startPlanet = findPlanet(start);
+
+        if (startPlanet == null) {
+            return result;
+        }
+
+        Queue<Planet> queue = new LinkedList<>();
+        ArrayList<Planet> visited = new ArrayList<>();
+
+        queue.add(startPlanet);
+        visited.add(startPlanet);
+
+        while (!queue.isEmpty()) {
+            Planet current = queue.poll();
+
+            result.add(current);
+
+            for (Planet neighbour : adjacencyList.get(current)) {
+                if (!visited.contains(neighbour)) {
+                    visited.add(neighbour);
+                    queue.add(neighbour);
                 }
             }
-            System.out.println();
         }
+
+        return result;
     }
 }

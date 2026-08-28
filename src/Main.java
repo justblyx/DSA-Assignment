@@ -1,5 +1,7 @@
 import javafx.application.Application;
 import javafx.application.Platform;
+
+import java.util.ArrayList;
 import java.util.InputMismatchException;
 import java.util.Scanner;
 
@@ -10,6 +12,7 @@ public class Main {
     enum MenuState {
         MAIN_MENU,
         ADD_GRAPH,
+        VIEW_ADJACENCY_LIST,
         TRAVERSE_GRAPH,
         DISPLAY_GRAPH,
         EXIT
@@ -101,10 +104,11 @@ public class Main {
 
                     System.out.println(padded("Main Menu"));
                     System.out.println(padded(seperator(20)));
-                    System.out.println(padded("1. Create Graph"));
-                    System.out.println(padded("2. BFS Traversal"));
-                    System.out.println(padded("3. View the Graph"));
-                    System.out.println(padded("4. Exit\n"));
+                    System.out.println(padded("1. Edit Graph"));
+                    System.out.println(padded("2. View Adjacency Planets"));
+                    System.out.println(padded("3. BFS Traversal"));
+                    System.out.println(padded("4. View the Graph"));
+                    System.out.println(padded("5. Exit\n"));
 
                     choice = getInt();
                     if (choice == -1) continue;
@@ -114,17 +118,20 @@ public class Main {
                             currentState = MenuState.ADD_GRAPH;
                             break;
                         case 2:
-                            currentState = MenuState.TRAVERSE_GRAPH;
+                            currentState = MenuState.VIEW_ADJACENCY_LIST;
                             break;
                         case 3:
-                            currentState = MenuState.DISPLAY_GRAPH;
+                            currentState = MenuState.TRAVERSE_GRAPH;
                             break;
                         case 4:
+                            currentState = MenuState.DISPLAY_GRAPH;
+                            break;
+                        case 5:
                             currentState = MenuState.EXIT;
                             System.out.println(padded("Successfully exited the program."));
                             break;
                         default:
-                            feedback("Invalid input");
+                            feedback("Invalid input!");
                             break;
                     }
                     break;
@@ -146,16 +153,22 @@ public class Main {
                     
                     switch(choice) {
                         case 1:
+                            // add planet
+                            graph.displayAvailablePlanets();
                             input = getString("Enter a planet name (or 0 to exit): ");
                             if (input.equals("0")) continue;
                             graph.addPlanet(input);
                             break;
                         case 2:
+                            // remove planet
+                            graph.displayExistingPlanets();
                             input = getString("Enter a planet name (or 0 to exit): ");
                             if (input.equals("0")) continue;
                             graph.removePlanet(input);
                             break;
                         case 3:
+                            // add edge
+                            graph.displayExistingPlanets();
                             src = getString("Enter source planet (or 0 to exit): ");
                             if (src.equals("0")) continue;
                             dest = getString("Enter destination planet: ");
@@ -163,6 +176,7 @@ public class Main {
                             break;
                         case 4:
                             // remove edge
+                            graph.displayExistingPlanets();
                             src = getString("Enter source planet (or 0 to exit): ");
                             if (src.equals("0")) continue;
                             dest = getString("Enter destination planet: ");
@@ -178,6 +192,39 @@ public class Main {
                     }
 
                     break;
+                
+                case VIEW_ADJACENCY_LIST:
+                    String planetName = getString("Enter planet name (or 0 to exit): ");
+
+                    if (planetName.equals("0")) {
+                        currentState = MenuState.MAIN_MENU;
+                        break;
+                    }
+
+                    ArrayList<Planet> adjacent = graph.getAdjacentPlanets(planetName);
+
+                    if (adjacent == null) {
+                        feedback("Planet does not exist!");
+                        break;
+                    }
+
+                    System.out.println("\n" + padded("Adjacent planets"));
+                    System.out.println(padded(seperator(30)));
+
+                    if (adjacent.isEmpty()) {
+                        System.out.println(padded("No routes available."));
+                    } else {
+                        for (Planet p: adjacent) {
+                            System.out.println(padded("- " + p.getName()));
+                        }
+                    }
+
+                    System.out.println();
+                    System.out.println(padded("Press enter to continue..."));
+                    scanner.nextLine();
+
+                    currentState = MenuState.MAIN_MENU;
+                    break;
 
                 case TRAVERSE_GRAPH:
                     if (graph.getPlanets().isEmpty()) {
@@ -189,6 +236,11 @@ public class Main {
                     String startPlanet = getString("Enter starting planet (or 0 to exit): ");
                     if (startPlanet.equals("0")) { 
                         currentState = MenuState.MAIN_MENU;
+                        break;
+                    }
+
+                    if (!graph.planetExists(startPlanet)) {
+                        feedback("Planet does not exist!");
                         break;
                     }
 

@@ -1,115 +1,119 @@
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.LinkedList;
-import java.util.Queue;
+public class NavigationGraph extends AbstractGraph {
 
-public class NavigationGraph {
-    private ArrayList<Planet> planets;
-    private HashMap<Planet, ArrayList<Planet>> adjacencyList;
+    private static final String[] VALID_PLANETS = {
+        "Mercury",
+        "Venus",
+        "Earth",
+        "Mars",
+        "Jupiter",
+        "Saturn",
+        "Uranus",
+        "Neptune"
+    };
 
     public NavigationGraph() {
-        planets = new ArrayList<>();
-        adjacencyList = new HashMap<>();
+        super();
+
+        createDefaultGraph();
     }
 
-    public ArrayList<Planet> getPlanets() { return planets; }
-    public HashMap<Planet, ArrayList<Planet>> getAdjacencyList() { return adjacencyList; }
-    
+    @Override
     public void addPlanet(String name) {
+
+        boolean validPlanet = false;
+
+        for (String planetName : VALID_PLANETS) {
+            if (planetName.equalsIgnoreCase(name)) {
+                validPlanet = true;
+                name = planetName;
+                break;
+            }
+        }
+
+        if (!validPlanet) {
+            Main.feedback("Invalid planet! Please enter a real planet.");
+            return;
+        }
+
         if (findPlanet(name) != null) {
             Main.feedback("Planet already exists!");
             return;
         }
+
         Planet p = new Planet(name);
+
         planets.add(p);
-        adjacencyList.put(p, new ArrayList<>());
+        adjacencyList.put(p, new java.util.ArrayList<>());
+
         Main.feedback("Planet added successfully!");
     }
 
-    public void removePlanet(String name) {
-        Planet p = findPlanet(name);
-        if (p == null) {
-            Main.feedback("Planet not found!");
-            return;
-        }
+    private void addPlanetWithoutFeedback(String name) {
+        Planet p = new Planet(name);
 
-        for (ArrayList<Planet> neighbours: adjacencyList.values()) {
-            neighbours.remove(p);
-        }
-
-        planets.remove(p);
-        adjacencyList.remove(p);
-
-        Main.feedback("Planet removed successfully!");
+        planets.add(p);
+        adjacencyList.put(p, new java.util.ArrayList<>());
     }
 
-    public void addRoute(String source, String destination) {
+    private void addRouteWithoutFeedback(String source, String destination) {
         Planet src = findPlanet(source);
         Planet dest = findPlanet(destination);
 
-        if (src == null || dest == null) {
-            Main.feedback("One or both planets do not exist!");
-            return;
+        if (src != null && dest != null) {
+            adjacencyList.get(src).add(dest);
+            adjacencyList.get(dest).add(src);
         }
-
-        if (src.equals(dest)) {
-            Main.feedback("A planet cannot be connected to itself!");
-            return;
-        }
-
-        adjacencyList.get(src).add(dest);
-        adjacencyList.get(dest).add(src);
-        
-        Main.feedback("Route added successfully!");
     }
 
-    public void removeRoute(String source, String destination) {
-        Planet src = findPlanet(source);
-        Planet dest = findPlanet(destination);
+    private void createDefaultGraph() {
+        // Default planets
+        addPlanetWithoutFeedback("Earth");
+        addPlanetWithoutFeedback("Mars");
+        addPlanetWithoutFeedback("Jupiter");
+        addPlanetWithoutFeedback("Saturn");
 
-        if (src == null || dest == null) {
-            Main.feedback("One or both planets do not exist!");
-            return;
-        }
-
-        adjacencyList.get(src).remove(dest);
-        adjacencyList.get(dest).remove(src);
-
-        Main.feedback("Route removed successfully!");
+        // Default routes
+        addRouteWithoutFeedback("Earth", "Mars");
+        addRouteWithoutFeedback("Earth", "Saturn");
+        addRouteWithoutFeedback("Mars", "Jupiter");
+        addRouteWithoutFeedback("Jupiter", "Saturn");
     }
 
-    private Planet findPlanet(String name) {
-        for (Planet p: planets) {
-            if (p.getName().equalsIgnoreCase(name)) return p;
-        }
-        return null;
-    }
-    public ArrayList<Planet> bfs(String start) {
-        ArrayList<Planet> result = new ArrayList<>();
+    public void displayAvailablePlanets() {
 
-        Planet startPlanet = findPlanet(start);
-        
-        if (startPlanet == null) return result;
+        System.out.println("\n" + Main.padded("Planets available to add"));
+        System.out.println(Main.padded(Main.seperator(30)));
 
-        Queue<Planet> queue = new LinkedList<>();
-        ArrayList<Planet> visited = new ArrayList<>();
+        boolean available = false;
 
-        queue.add(startPlanet);
-        visited.add(startPlanet);
+        for (String planetName : VALID_PLANETS) {
 
-        while (!queue.isEmpty()) {
-            Planet current = queue.poll();
-            
-            result.add(current);
-
-            for (Planet neighbour: adjacencyList.get(current)) {
-                if (!visited.contains(neighbour)) {
-                    visited.add(neighbour);
-                    queue.add(neighbour);
-                }
+            if (findPlanet(planetName) == null) {
+                System.out.println(Main.padded("- " + planetName));
+                available = true;
             }
         }
 
-        return result;
+        if (!available) {
+            System.out.println(Main.padded("All planets have already been added."));
+        }
+
+        System.out.println();
+    }
+
+    public void displayExistingPlanets() {
+
+        System.out.println("\n" + Main.padded("Planets currently in graph"));
+        System.out.println(Main.padded(Main.seperator(30)));
+
+        if (planets.isEmpty()) {
+            System.out.println(Main.padded("No planets in graph."));
+        } else {
+            for (Planet p : planets) {
+                System.out.println(Main.padded("- " + p.getName()));
+            }
+        }
+
+        System.out.println();
     }
 }

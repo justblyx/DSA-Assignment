@@ -19,14 +19,18 @@ import java.util.ArrayList;
 import java.util.HashMap;
 
 public class NavigationController extends Application {
+    // JavaFX 
     private static Stage stage;
-    private static NavigationGraph graph;
     private static Pane graphPane;
+    private static Font bold = Font.font("Arial", FontWeight.BOLD, 14);
+    private static Font normal = Font.font("Arial", 14);
+
+    private static NavigationGraph graph;
     private static HashMap<Planet, Circle> planetCircles;
 
-    // BFS variables
+    // BFS variables & elements
+    private static VBox bfsPanel;
     private static ArrayList<Planet> bfsResult;
-
     private static int bfsStep;
 
     private static Label currentLabel;
@@ -35,12 +39,6 @@ public class NavigationController extends Application {
 
     private static Button nextStepButton;
     private static Button resetButton;
-
-    // Contains BFS labels and buttons
-    private static VBox bfsPanel;
-
-    private static Font bold = Font.font("Arial", FontWeight.BOLD, 14);
-    private static Font normal = Font.font("Arial", 14);
 
     public static void setGraph(NavigationGraph navigationGraph) { graph = navigationGraph; }
 
@@ -53,7 +51,6 @@ public class NavigationController extends Application {
 
         graphPane = new Pane();
         graphPane.setPrefSize(800, 550);
-
 
         currentLabel = new Label("Current: -");
         visitedLabel = new Label("Traversal: []");
@@ -160,18 +157,29 @@ public class NavigationController extends Application {
         planetCircles = new HashMap<>();
 
         ArrayList<Planet> planets = graph.getPlanets();
+
         HashMap<Planet, Point2D> positions = new HashMap<>();
+
         HashMap<Planet, ArrayList<Planet>> adjacencyList = graph.getAdjacencyList();
+
         ArrayList<String> drawnRoutes = new ArrayList<>();
 
         // Assign positions to each planets
-        for (int i=0; i<planets.size(); i++) {
-            Planet p = planets.get(i);
+        HashMap<String, Point2D> fixedPositions = new HashMap<>();
 
-            double x = 100 + (i % 4) * 180;
-            double y = 100 + (i / 4) * 150;
+        fixedPositions.put("Mercury", new Point2D(400, 60));
+        fixedPositions.put("Venus", new Point2D(550, 120));
+        fixedPositions.put("Earth", new Point2D(620, 275));
+        fixedPositions.put("Mars", new Point2D(550, 430));
+        fixedPositions.put("Jupiter", new Point2D(400, 490));
+        fixedPositions.put("Saturn", new Point2D(250, 430));
+        fixedPositions.put("Uranus", new Point2D(180, 275));
+        fixedPositions.put("Neptune", new Point2D(250, 120));
 
-            positions.put(p, new Point2D(x, y));
+        for (Planet p: planets) {
+            Point2D position = fixedPositions.get(p.getName());
+
+            if (position != null) positions.put(p, position);
         }
         
         // Draw routes
