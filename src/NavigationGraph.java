@@ -18,7 +18,7 @@ public class NavigationGraph extends AbstractGraph {
     }
 
     @Override
-    public void addPlanet(String name) {
+    public boolean addPlanet(String name) {
 
         boolean validPlanet = false;
 
@@ -32,12 +32,12 @@ public class NavigationGraph extends AbstractGraph {
 
         if (!validPlanet) {
             Main.feedback("Invalid planet! Please enter a real planet.");
-            return;
+            return false;
         }
 
         if (findPlanet(name) != null) {
             Main.feedback("Planet already exists!");
-            return;
+            return false;
         }
 
         Planet p = new Planet(name);
@@ -46,6 +46,7 @@ public class NavigationGraph extends AbstractGraph {
         adjacencyList.put(p, new java.util.ArrayList<>());
 
         Main.feedback("Planet added successfully!");
+        return true;
     }
 
     private void addPlanetWithoutFeedback(String name) {

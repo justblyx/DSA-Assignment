@@ -63,7 +63,8 @@ public class Main {
             return input;
         } catch (InputMismatchException e) {
             feedback("Invalid input!");
-            return -1;
+            scanner.nextLine();
+            return -999;
         }
         
     }
@@ -111,7 +112,7 @@ public class Main {
                     System.out.println(padded("5. Exit\n"));
 
                     choice = getInt();
-                    if (choice == -1) continue;
+                    if (choice == -999) continue;
 
                     switch(choice) {
                         case 1:
@@ -149,38 +150,53 @@ public class Main {
                     System.out.println(padded("5. Return to Main Menu\n"));
 
                     choice = getInt();
-                    if (choice == -1) continue;
+                    if (choice == -999) continue;
                     
                     switch(choice) {
                         case 1:
                             // add planet
-                            graph.displayAvailablePlanets();
-                            input = getString("Enter a planet name (or 0 to exit): ");
-                            if (input.equals("0")) continue;
-                            graph.addPlanet(input);
+                            while (true) {
+                                graph.displayAvailablePlanets();
+
+                                input = getString("Enter a planet name (or 0 to exit): ");
+
+                                if (input.equals("0")) break;
+                                if (graph.addPlanet(input)) break;
+                            }
                             break;
                         case 2:
                             // remove planet
-                            graph.displayExistingPlanets();
-                            input = getString("Enter a planet name (or 0 to exit): ");
-                            if (input.equals("0")) continue;
-                            graph.removePlanet(input);
+                            while (true) {
+                                graph.displayExistingPlanets();
+                                input = getString("Enter a planet name (or 0 to exit): ");
+                                if (input.equals("0")) break;
+                                if (graph.removePlanet(input)) break;
+                            }
+                            
                             break;
                         case 3:
                             // add edge
-                            graph.displayExistingPlanets();
-                            src = getString("Enter source planet (or 0 to exit): ");
-                            if (src.equals("0")) continue;
-                            dest = getString("Enter destination planet: ");
-                            graph.addRoute(src, dest);
+                            while (true) {
+                                graph.displayExistingPlanets();
+                                src = getString("Enter source planet (or 0 to exit): ");
+                                if (src.equals("0")) break;
+                                dest = getString("Enter destination planet: ");
+                                if (dest.equals("0")) break;
+                                if (graph.addRoute(src, dest)) break;
+                            }
+                            
                             break;
                         case 4:
                             // remove edge
-                            graph.displayExistingPlanets();
-                            src = getString("Enter source planet (or 0 to exit): ");
-                            if (src.equals("0")) continue;
-                            dest = getString("Enter destination planet: ");
-                            graph.removeRoute(src, dest);
+                            while (true) {
+                                graph.displayExistingPlanets();
+                                src = getString("Enter source planet (or 0 to exit): ");
+                                if (src.equals("0")) break;
+                                dest = getString("Enter destination planet: ");
+                                if (dest.equals("0")) break;
+                                if (graph.removeRoute(src, dest)) break;
+                            }
+                            
                             break;
                         case 5:
                             currentState = MenuState.MAIN_MENU;
@@ -194,6 +210,8 @@ public class Main {
                     break;
                 
                 case VIEW_ADJACENCY_LIST:
+                    graph.displayExistingPlanets();
+                    
                     String planetName = getString("Enter planet name (or 0 to exit): ");
 
                     if (planetName.equals("0")) {

@@ -50,12 +50,12 @@ public abstract class AbstractGraph implements Graph {
     }
 
     @Override
-    public void removePlanet(String name) {
+    public boolean removePlanet(String name) {
         Planet p = findPlanet(name);
 
         if (p == null) {
             Main.feedback("Planet does not exist!");
-            return;
+            return false;
         }
 
         // Remove the planet from other adjacency lists
@@ -68,26 +68,27 @@ public abstract class AbstractGraph implements Graph {
         adjacencyList.remove(p);
 
         Main.feedback("Planet removed successfully!");
+        return true;
     }
 
     @Override
-    public void addRoute(String source, String destination) {
+    public boolean addRoute(String source, String destination) {
         Planet src = findPlanet(source);
         Planet dest = findPlanet(destination);
 
         if (src == null || dest == null) {
             Main.feedback("One or both planets do not exist!");
-            return;
+            return false;
         }
 
         if (src.equals(dest)) {
             Main.feedback("A planet cannot be connected to itself!");
-            return;
+            return false;
         }
 
         if (adjacencyList.get(src).contains(dest)) {
             Main.feedback("Route already exists!");
-            return;
+            return false;
         }
 
         // Undirected graph
@@ -95,27 +96,29 @@ public abstract class AbstractGraph implements Graph {
         adjacencyList.get(dest).add(src);
 
         Main.feedback("Route added successfully!");
+        return true;
     }
 
     @Override
-    public void removeRoute(String source, String destination) {
+    public boolean removeRoute(String source, String destination) {
         Planet src = findPlanet(source);
         Planet dest = findPlanet(destination);
 
         if (src == null || dest == null) {
             Main.feedback("One or both planets do not exist!");
-            return;
+            return false;
         }
 
         if (!adjacencyList.get(src).contains(dest)) {
             Main.feedback("Route does not exist!");
-            return;
+            return false;
         }
 
         adjacencyList.get(src).remove(dest);
         adjacencyList.get(dest).remove(src);
 
         Main.feedback("Route removed successfully!");
+        return true;
     }
 
     @Override
