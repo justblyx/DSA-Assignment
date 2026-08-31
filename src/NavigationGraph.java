@@ -70,14 +70,18 @@ public class NavigationGraph extends AbstractGraph {
         // Default planets
         addPlanetWithoutFeedback("Earth");
         addPlanetWithoutFeedback("Mars");
+        addPlanetWithoutFeedback("Venus");
+        addPlanetWithoutFeedback("Mercury");
         addPlanetWithoutFeedback("Jupiter");
         addPlanetWithoutFeedback("Saturn");
 
         // Default routes
         addRouteWithoutFeedback("Earth", "Mars");
-        addRouteWithoutFeedback("Earth", "Saturn");
+        addRouteWithoutFeedback("Earth", "Venus");
+        addRouteWithoutFeedback("Earth", "Mercury");
+
         addRouteWithoutFeedback("Mars", "Jupiter");
-        addRouteWithoutFeedback("Jupiter", "Saturn");
+        addRouteWithoutFeedback("Mars", "Saturn");
     }
 
     public void displayAvailablePlanets() {

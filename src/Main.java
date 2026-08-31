@@ -106,7 +106,7 @@ public class Main {
                     System.out.println(padded("Main Menu"));
                     System.out.println(padded(seperator(20)));
                     System.out.println(padded("1. Edit Graph"));
-                    System.out.println(padded("2. View Adjacency Planets"));
+                    System.out.println(padded("2. View Adjacency List"));
                     System.out.println(padded("3. BFS Traversal"));
                     System.out.println(padded("4. View the Graph"));
                     System.out.println(padded("5. Exit\n"));
@@ -210,30 +210,36 @@ public class Main {
                     break;
                 
                 case VIEW_ADJACENCY_LIST:
-                    graph.displayExistingPlanets();
-                    
-                    String planetName = getString("Enter planet name (or 0 to exit): ");
+                    System.out.println(seperator(CLI_SIZE));
+                    System.out.println("|" + padded("View Adjacency List", CLI_SIZE - 2) + "|");
+                    System.out.println(seperator(CLI_SIZE));
 
-                    if (planetName.equals("0")) {
-                        currentState = MenuState.MAIN_MENU;
-                        break;
-                    }
 
-                    ArrayList<Planet> adjacent = graph.getAdjacentPlanets(planetName);
-
-                    if (adjacent == null) {
-                        feedback("Planet does not exist!");
-                        break;
-                    }
-
-                    System.out.println("\n" + padded("Adjacent planets"));
+                    System.out.println(padded("Adjacency List"));
                     System.out.println(padded(seperator(30)));
 
-                    if (adjacent.isEmpty()) {
-                        System.out.println(padded("No routes available."));
+                    if (graph.getPlanets().isEmpty()) {
+                        System.out.print(padded("There are no planets in the graph!"));
                     } else {
-                        for (Planet p: adjacent) {
-                            System.out.println(padded("- " + p.getName()));
+                        for (Planet planet: graph.getPlanets()) {
+                            ArrayList<Planet> adjacent = graph.getAdjacentPlanets(planet.getName());
+
+                            StringBuilder adjacency = new StringBuilder();
+
+                            adjacency.append(planet.getName()).append(" -> [");
+
+                            for (int i = 0; i < adjacent.size(); i++) {
+                                adjacency.append(adjacent.get(i).getName());
+
+                                if (i < adjacent.size() - 1) {
+                                    adjacency.append(", ");
+                                }
+                            }
+
+                            adjacency.append("]");
+
+                            System.out.println(padded(adjacency.toString()));
+
                         }
                     }
 
