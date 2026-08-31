@@ -20,7 +20,6 @@ How to Run
 1. Open Main.java
 2. Right Click -> Run Java
 
-javasdk
 ## Folder Structure
 
 The workspace contains several folders, where:
