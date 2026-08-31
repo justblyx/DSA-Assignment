@@ -11,6 +11,7 @@ Ensure the following are installed:
 
 Then:
 - Open the project in Visual Studio Code (Main IDE used to develop this system)
+- Ensure file path is ../DSA-Assignment/ (Needed to access JavaFX correctly)
 - Ensure JDK 25.0.2 is configured as the project's Java JDK.
 (VSCode: Ctrl + Shift P -> Search for Java: Configure Java Runtime -> Under Installed JDKS, select jdk 25.0.2)
 - Ensure vmArgs in launch.json is as following:
